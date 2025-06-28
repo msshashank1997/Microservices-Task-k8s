@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: gateway-service
   namespace: mico-k8s
+  labels:
+    app: gateway-service
+    tier: gateway
 spec:
   selector:
     app: gateway-service
@@ -10,4 +13,4 @@ spec:
   - port: 3003
     protocol: TCP 
     targetPort: 3003
-  type: ClusterIP
+  type: NodePort

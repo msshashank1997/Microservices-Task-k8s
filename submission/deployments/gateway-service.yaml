@@ -16,24 +16,27 @@ spec:
       containers:
       - name: gateway-service
         image: demoteam88/gateway-service:latest
+        env:
+        - name: PORT
+          value: "3003"
+        - name: NODE_ENV
+          value: "development"
+        - name: DEBUG
+          value: "*"
+        - name: LOG_LEVEL
+          value: "debug"
+        - name: USER_SERVICE_URL
+          value: "http://user-service.mico-k8s.svc.cluster.local:3000"
+        - name: PRODUCT_SERVICE_URL
+          value: "http://product-service.mico-k8s.svc.cluster.local:3001"
+        - name: ORDER_SERVICE_URL
+          value: "http://order-service.mico-k8s.svc.cluster.local:3002"
         resources:
           limits:
-            memory: "128Mi"
-            cpu: "500m"
-          requests:
-            memory: "64Mi"
+            memory: "256Mi"
             cpu: "250m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
         ports:
         - containerPort: 3003
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3003
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 3003
-          initialDelaySeconds: 5
-          periodSeconds: 5

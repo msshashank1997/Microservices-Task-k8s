@@ -16,24 +16,21 @@ spec:
       containers:
       - name: product-service
         image: demoteam88/product-services:latest
+        env:
+        - name: PORT
+          value: "3001"
+        - name: NODE_ENV
+          value: "development"
+        - name: DEBUG
+          value: "*"
+        - name: LOG_LEVEL
+          value: "debug"
         resources:
           limits:
             memory: "128Mi"
-            cpu: "500m"
+            cpu: "200m"
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
         ports:
         - containerPort: 3001
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3001
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 3001
-          initialDelaySeconds: 5
-          periodSeconds: 5

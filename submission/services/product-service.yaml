@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: product-service
   namespace: mico-k8s
+  labels:
+    app: product-service
+    tier: backend
 spec:
   selector:
     app: product-service

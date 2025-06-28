@@ -122,66 +122,43 @@ kubectl describe service <service-name> -n mico-k8s
 
 ### 3. Service Communication Testing
 
-#### Method 1: Using kubectl port-forward
-
+**Test Gateway Service (Main Entry Point):**
 ```bash
 # Port-forward Gateway Service
 kubectl port-forward -n mico-k8s service/gateway-service 8080:3003
 
-# Test gateway endpoint
-curl http://localhost:8080/health
-
-# Port-forward individual services
-kubectl port-forward -n mico-k8s service/user-service 8081:3000
-kubectl port-forward -n mico-k8s service/product-service 8082:3001
-kubectl port-forward -n mico-k8s service/order-service 8083:3002
+# Test gateway endpoint (in a new terminal)
+curl http://localhost:8080/
+curl -v http://localhost:8080/api/users
+curl -v http://localhost:8080/api/products
+curl -v http://localhost:8080/api/orders
 ```
 
-#### Method 2: Inter-service Communication Test
-
+**Test Individual Services:**
 ```bash
-# Create a test pod for internal testing
-kubectl run test-pod --image=curlimages/curl -n mico-k8s --rm -it --restart=Never -- sh
+# Port-forward User Service
+kubectl port-forward -n mico-k8s service/user-service 8081:3000 &
 
-# Inside the test pod, test service communication:
-curl http://user-service:3000/health
-curl http://product-service:3001/health
-curl http://order-service:3002/health
-curl http://gateway-service:3003/health
+# Port-forward Product Service  
+kubectl port-forward -n mico-k8s service/product-service 8082:3001 &
+
+# Port-forward Order Service
+kubectl port-forward -n mico-k8s service/order-service 8083:3002 &
+
+# Test individual services
+curl http://localhost:8081/
+curl http://localhost:8082/
+curl http://localhost:8083/
+
+# Stop port-forwarding (kill background processes)
+pkill -f "kubectl port-forward"
 ```
+![alt text](image.png)
 
-#### Method 3: Using Minikube Service
+![alt text](image-1.png)
 
-```bash
-# Expose service via Minikube (creates tunnel)
-minikube service gateway-service -n mico-k8s --url
+![alt text](image-2.png)
 
-# This will provide a URL like: http://192.168.49.2:30001
-# Use this URL to test the service externally
-```
-
-### 4. Log Analysis
-
-```bash
-# View logs for specific services
-kubectl logs -n mico-k8s deployment/user-service
-kubectl logs -n mico-k8s deployment/product-service
-kubectl logs -n mico-k8s deployment/order-service
-kubectl logs -n mico-k8s deployment/gateway-service
-
-# Follow logs in real-time
-kubectl logs -n mico-k8s deployment/gateway-service -f
-
-# View logs from all containers
-kubectl logs -n mico-k8s --selector=app=gateway-service
-```
-
-## Health Check Endpoints
-
-Each service provides health check endpoints:
-
-- **Liveness Probe**: `/health` - Indicates if the service is running
-- **Readiness Probe**: `/ready` - Indicates if the service is ready to accept traffic
 
 ## Troubleshooting Tips
 
@@ -276,10 +253,6 @@ minikube delete
    curl -v http://localhost:8080/health
    ```
 
-4. **Service Discovery Test**:
-   ```bash
-   kubectl exec -n mico-k8s <test-pod> -- curl http://user-service:3000/health
-   ```
 
 ## Additional Monitoring
 

@@ -16,24 +16,25 @@ spec:
       containers:
       - name: order-service
         image: demoteam88/order-services:latest
+        env:
+        - name: PORT
+          value: "3002"
+        - name: NODE_ENV
+          value: "development"
+        - name: DEBUG
+          value: "*"
+        - name: LOG_LEVEL
+          value: "debug"
+        - name: USER_SERVICE_URL
+          value: "http://user-service.mico-k8s.svc.cluster.local:3000"
+        - name: PRODUCT_SERVICE_URL
+          value: "http://product-service.mico-k8s.svc.cluster.local:3001"
         resources:
           limits:
             memory: "128Mi"
-            cpu: "500m"
+            cpu: "200m"
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
         ports:
         - containerPort: 3002
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 3002
-          initialDelaySeconds: 5
-          periodSeconds: 5

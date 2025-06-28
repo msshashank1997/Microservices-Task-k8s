@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: order-service
   namespace: mico-k8s
+  labels:
+    app: order-service
+    tier: backend
 spec:
   selector:
     app: order-service
