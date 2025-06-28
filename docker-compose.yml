@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  user-services:
+    build: ./Microservices/user-service
+    container_name: user-services
+    ports:
+      - 3000:3000
+
+  product-services:
+    build: ./Microservices/product-service
+    container_name: product-services
+    ports:
+      - 3001:3001
+
+  order-services:
+    build: ./Microservices/order-service
+    container_name: order-services
+    ports:
+      - 3002:3002
+  
+  gateway:
+    build: ./Microservices/gateway-service
+    container_name: gateway
+    ports:
+      - 3003:3003
+    depends_on:
+      - user-services
+      - product-services
+      - order-services
